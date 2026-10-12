@@ -1,0 +1,8 @@
+{
+  "name": "sprout-room",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "sql.js": "^1.10.2"
+  }
+}
