@@ -349,6 +349,45 @@ app.get('/api/products/:id', (req, res) => {
   }
 });
 
+// Create order
+app.post('/api/orders', (req, res) => {
+  try {
+    const { name, email, address, items } = req.body;
+    
+    // Validate inputs
+    if (!name || !email || !address || !items || items.length === 0) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Calculate total
+    let total = 0;
+    for (const item of items) {
+      const products = queryToObjects(`SELECT price FROM products WHERE id = ${item.id}`);
+      if (products.length > 0) {
+        total += products[0].price * item.qty;
+      }
+    }
+
+    // Generate order ID
+    const orderId = Math.floor(100000 + Math.random() * 900000);
+    
+    // In a real app, you would save this to a database
+    // For now, we'll just return the order confirmation
+    
+    res.json({
+      orderId,
+      total,
+      name,
+      email,
+      address,
+      items
+    });
+  } catch (err) {
+    console.error('Error creating order:', err);
+    res.status(500).json({ error: 'Failed to create order' });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
